@@ -23,36 +23,31 @@ Request(test[0], Mycallback);
 function Mycallback(param){
     arrTest[count++] = param;
     var target = "-q-"; // цель поиска
-    var arr = [];
-    var count1 = 0;
+
+    var questions = [];
     var buf = -1;
-    var pos = -1;
-    toArrObj();
-    
-    while ((pos = arrTest[0].indexOf(target, pos + 1)) != -1) {
-    
-    if(pos == 0) {
-         arr[count1].start = 0;
-     } else{
-         arr[count1].finish = pos;
-         count1++;
-         arr[count1].start = pos;
-     }
+    var pos = qPosition(arrTest[0], target, -1);
 
+    var ArrayQue = [];
+    
+    while (pos != -1) {
+        questions.push(arrTest[0].slice(pos, qPosition(arrTest[0], target, pos)));
+        pos = qPosition(arrTest[0], target, pos);        
     }
-    console.log(arr);
-    console.log(arrTest[0].slice(arr[0].start,arr[0].finish));
 
-    ////////////////////
-    function toArrObj(){
-        sum = 0;
-        while ((pos = arrTest[0].indexOf(target, pos + 1)) != -1) { // arrTest[0] !!!!
-        sum += 1;
-        }
-        for(var i = 0; i < sum; i++){
-            arr[i] = {};
-        }   
+    var answ = [];
+    pos = qPosition(questions[0], '-v-', -1);
+    while (pos != -1) {
+        answ.push(arrTest[0].slice(pos, qPosition(arrTest[0], '-v-', pos)));
+        pos = qPosition(arrTest[0], '-v-', pos);        
     }
+
+    console.log(answ)
+    
+    function qPosition(txt, target, prevPosition){
+        return txt.indexOf(target, prevPosition + 1)
+    }
+    
 
 }
 
