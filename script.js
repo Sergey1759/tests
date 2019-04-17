@@ -9,7 +9,7 @@ function Request(test, callback){
         if(request.status === 200) { 
             callback(request.responseText);
         } else {
-          bio.innerHTML = 'An error occurred during your request: ' +  request.status + ' ' + request.statusText;
+          //bio.innerHTML = 'An error occurred during your request: ' +  request.status + ' ' + request.statusText;
         } 
       }
     }
@@ -40,18 +40,22 @@ function Mycallback(param){
       pos = qPosition(questions[i], '-v-', -1);
       var t = qPosition(questions[i], '-t-', pos);
 
-      answ[i] = { questions : '',answer : [], true : ''};
+      answ[i] = { questions : '',answer : [], true : '', id : i};
 
       answ[i].questions = questions[i].slice(0 + 3, qPosition(questions[i], '-v-', pos - 1));
-      answ[i].true = questions[i].slice(t + 3, qPosition(questions[i], '-v-', t));
+      
 
       while (pos != -1) {
-          answ[i].answer.push(questions[i].slice(pos + 3, qPosition(questions[i], '-v-', pos)));
+          answ[i].answer.push({answe : questions[i].slice(pos + 3, qPosition(questions[i], '-v-', pos)), vali : false});
           pos = qPosition(questions[i], '-v-', pos);        
       }
       for(var j = 0; j < answ[i].answer.length; j++){
-        var t = answ[i].answer[j].indexOf('-t-')
-        if(t != -1) answ[i].answer[j] = answ[i].answer[j].slice(t + 3)
+         
+        var t = answ[i].answer[j].answe.indexOf('-t-')
+        if(t != -1) { 
+          answ[i].answer[j].answe = answ[i].answer[j].answe.slice(t + 3);
+          answ[i].answer[j].vali = true;
+        }
       }
     }
     
