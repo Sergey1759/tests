@@ -1,7 +1,7 @@
 var test = ['test1.txt','test2.txt']
 var arrTest = [];
 var count = 0;
-
+var showT = false;
 function Request(test, callback){
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -23,7 +23,6 @@ Request(test[0], Mycallback);
 function Mycallback(param){
     arrTest[count++] = param;
     var target = "-q-"; // цель поиска
-
     var questions = [];
     var buf = -1;
     var pos = qPosition(arrTest[0], target, -1);
@@ -36,13 +35,24 @@ function Mycallback(param){
     }
 
     var answ = [];
-    pos = qPosition(questions[0], '-v-', -1);
-    while (pos != -1) {
-        answ.push(arrTest[0].slice(pos, qPosition(arrTest[0], '-v-', pos)));
-        pos = qPosition(arrTest[0], '-v-', pos);        
-    }
 
-    console.log(answ)
+    for(var i = 0; i < questions.length; i++){
+      pos = qPosition(questions[i], '-v-', -1);
+      var t = qPosition(questions[i], '-t-', pos);
+
+      answ[i] = { questions : '',answer : [], true : ''};
+
+      answ[i].questions = questions[i].slice(0 + 3, qPosition(questions[i], '-v-', pos - 1));
+      answ[i].true = questions[i].slice(t + 3, qPosition(questions[i], '-v-', t));
+
+      while (pos != -1) {
+          answ[i].answer.push(questions[i].slice(pos + 3, qPosition(questions[i], '-v-', pos)));
+          pos = qPosition(questions[i], '-v-', pos);        
+      }
+    }
+ 
+
+    console.log(answ);
     
     function qPosition(txt, target, prevPosition){
         return txt.indexOf(target, prevPosition + 1)
