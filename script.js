@@ -1,7 +1,85 @@
-var test = ['test1.txt','test2.txt']
-var arrTest = [];
-var count = 0;
-var showT = false;
+var sel_but = document.getElementById('sel_but');
+var conteiner = document.getElementById('conteiner');
+
+
+sel_but.onclick = function(){
+    var menu = document.getElementsByName('menu');
+	for (var i=0;i<menu.length; i++) {
+		if (menu[i].checked) {
+            console.log(menu[i].id);
+			 Request(menu[i].id, Mycallback);
+		}
+	}
+   
+}
+
+function Mycallback(param){
+    var Array = getArray(param);
+    console.log(Array);
+    DOM_Add_html(Array);
+    
+}
+
+function DOM_Add_html(arr){ 
+    for(var i = 0; i < arr.length; i++){
+        var form = document.createElement('form');
+        form.id = arr[i].id;
+        form.classList.add('myForm');
+        var h3 = '<h3>' + arr[i].questions + '</h3>'
+        var radio = "";
+        for(var j = 0; j < arr[i].answer.length; j++){
+            radio = radio + `
+        <label class="container"> ${arr[i].answer[j].answe}
+        <input type="radio"  name="radio">
+        <span class="checkmark"></span>
+        </label>
+        `;
+            console.log(arr[i].answer[j].answe);
+        }
+        form.innerHTML = h3 + radio;
+        conteiner.appendChild(form);
+    }
+}
+
+function getArray(param){
+    var target = "-q-"; // цель поиска
+    var questions = [];
+    var pos = qPosition(param, target, -1);
+    
+    while (pos != -1) {
+        questions.push(param.slice(pos, qPosition(param, target, pos)));
+        pos = qPosition(param, target, pos);        
+    }
+
+    var answ = [];
+    var count_answer = 0; 
+    
+    for(var i = 0; i < questions.length; i++){
+      pos = qPosition(questions[i], '-v-', -1);
+      var t = qPosition(questions[i], '-t-', pos);
+
+      answ[i] = { questions : '',answer : [], right : -1, id : i};
+
+      answ[i].questions = questions[i].slice(0 + 3, qPosition(questions[i], '-v-', pos - 1));
+    
+      while (pos != -1) {
+          answ[i].answer.push({answe : questions[i].slice(pos + 3, qPosition(questions[i], '-v-', pos)), id : count_answer++});
+          pos = qPosition(questions[i], '-v-', pos);        
+      }
+      for(var j = 0; j < answ[i].answer.length; j++){
+         
+        var t = answ[i].answer[j].answe.indexOf('-t-')
+        if(t != -1) { 
+          answ[i].answer[j].answe = answ[i].answer[j].answe.slice(t + 3);
+          answ[i].right = answ[i].answer[j].id;
+        }
+      }
+    
+    }
+    function qPosition(txt, target, prevPosition){  return txt.indexOf(target, prevPosition + 1); }
+        return answ;
+    }
+
 function Request(test, callback){
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -15,63 +93,5 @@ function Request(test, callback){
     }
     request.open('Get', test);
     request.send();
-    // console.log(arrTest[0]);
+    
 }
-Request(test[0], Mycallback);
-//Request(test[1], Mycallback);
-
-function Mycallback(param){
-    arrTest[count++] = param;
-    var target = "-q-"; // цель поиска
-    var questions = [];
-    var buf = -1;
-    var pos = qPosition(arrTest[0], target, -1);
-
-    var ArrayQue = [];
-    
-    while (pos != -1) {
-        questions.push(arrTest[0].slice(pos, qPosition(arrTest[0], target, pos)));
-        pos = qPosition(arrTest[0], target, pos);        
-    }
-
-    var answ = [];
-
-    for(var i = 0; i < questions.length; i++){
-      pos = qPosition(questions[i], '-v-', -1);
-      var t = qPosition(questions[i], '-t-', pos);
-
-      answ[i] = { questions : '',answer : [], true : '', id : i};
-
-      answ[i].questions = questions[i].slice(0 + 3, qPosition(questions[i], '-v-', pos - 1));
-      
-
-      while (pos != -1) {
-          answ[i].answer.push({answe : questions[i].slice(pos + 3, qPosition(questions[i], '-v-', pos)), vali : false});
-          pos = qPosition(questions[i], '-v-', pos);        
-      }
-      for(var j = 0; j < answ[i].answer.length; j++){
-         
-        var t = answ[i].answer[j].answe.indexOf('-t-')
-        if(t != -1) { 
-          answ[i].answer[j].answe = answ[i].answer[j].answe.slice(t + 3);
-          answ[i].answer[j].vali = true;
-        }
-      }
-    }
-    
-    
-
-    console.log(answ);
-    
-    function qPosition(txt, target, prevPosition){
-        return txt.indexOf(target, prevPosition + 1);
-    }
-    
-
-}
-
-
-
-
-
-

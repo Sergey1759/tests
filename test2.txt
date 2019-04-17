@@ -1,21 +1,17 @@
-<form id = 1>
-	<h1>Caption</h1>
-<input type="radio" name="r1" value="5">Первый<br>
-<input type="radio" name="r1" value="13">Второй<br>
-<input type="radio" name="r1" value="53">Третий<br>
-</form>
-<h1>Caption</h1>
-<input type="radio" name="r1" value="5">Первый<br>
-<input type="radio" name="r1" value="13">Второй<br>
-<input type="radio" name="r1" value="53">Третий<br>
+-q- 88!!!Електроннsdfsdfsdfа обчислювальна машина (ЕОМ) – це 
+-v- Комплекс аsdfsdfпаратних і програмних засобів для обробки інформації 
+-v- Модель, що вdsfsdfтановлює склад, порядок і принципи взаємодії вхідних у неї компонентів
+-v- -t- !!!!Комплекс технічних засобів, призначений для автоматичної обробки інформації
+-q- Інфорsdfsdfмація в ЕОМ sdfsdкодується:
+-v- В десятковій системі числення
+-v- В символах
+-v- -t- В двійковій системі числення
+-q- Для представлення чисел в вісімковій системі числення використовують цифри
+-v- 0 - 7
+-v- -t- 0 - 8
+-v- 1 - 8
+-q- Мінімальна одиниця інформації в двійковому коді – це
+-v- Байт
+-v- -t- Біт
+-v- Параграф
 
-<button onclick="fun1()">Проверить, какой из элементов выбран</button>
-
-function fun1() {
-	var rad = document.getElementsByName('r1');
-	for (var i=0;i<rad.length; i++) {
-		if (rad[i].checked) {
-			alert('Выбран '+ rad[i].value +' radiobutton');
-		}
-	}
-}
