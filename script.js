@@ -49,13 +49,18 @@ function Mycallback(param){
           answ[i].answer.push(questions[i].slice(pos + 3, qPosition(questions[i], '-v-', pos)));
           pos = qPosition(questions[i], '-v-', pos);        
       }
+      for(var j = 0; j < answ[i].answer.length; j++){
+        var t = answ[i].answer[j].indexOf('-t-')
+        if(t != -1) answ[i].answer[j] = answ[i].answer[j].slice(t + 3)
+      }
     }
- 
+    
+    
 
     console.log(answ);
     
     function qPosition(txt, target, prevPosition){
-        return txt.indexOf(target, prevPosition + 1)
+        return txt.indexOf(target, prevPosition + 1);
     }
     
 
