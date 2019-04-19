@@ -1,21 +1,36 @@
 var sel_but = document.getElementById('sel_but');
 var conteiner = document.getElementById('conteiner');
-
+var but_On = false;
 
 sel_but.onclick = function(){
+    var form = document.getElementsByClassName('myForm');
     var menu = document.getElementsByName('menu');
-	for (var i=0;i<menu.length; i++) {
-		if (menu[i].checked) {
-            console.log(menu[i].id);
-			 Request(menu[i].id, Mycallback);
-		}
-	}
-   
+    clear(conteiner,form);
+    console.log(1);
+    if(but_On != false){
+      var save = confirm("Вы - администратор?");
+      if(save){
+        for (var i=0;i<menu.length; i++) {
+          if (menu[i].checked) {
+             Request(menu[i].id, Mycallback);
+          }
+        }
+         but_On = true;
+      }
+    } else{
+      for (var i=0;i<menu.length; i++) {
+        if (menu[i].checked) {
+           Request(menu[i].id, Mycallback);
+        }
+      }
+       but_On = true;
+    }
+    
 }
 
 function Mycallback(param){
     var Array = getArray(param);
-    console.log(Array);
+    //console.log(Array);
     DOM_Add_html(Array);
     
 }
@@ -94,4 +109,10 @@ function Request(test, callback){
     request.open('Get', test);
     request.send();
     
+}
+
+function clear(Parent_elem,elem){
+    for(var i = 0; i < elem.length; i++){
+      Parent_elem.removeChild(elem[i]);
+    }
 }
