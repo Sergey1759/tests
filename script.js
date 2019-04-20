@@ -1,38 +1,78 @@
 var sel_but = document.getElementById('sel_but');
+var ver_but = document.getElementById('verify');
 var conteiner = document.getElementById('conteiner');
 var but_On = false;
+var finalArr;
 
 sel_but.onclick = function(){
     var form = document.getElementsByClassName('myForm');
     var menu = document.getElementsByName('menu');
-    clear(conteiner,form);
-    console.log(1);
-    if(but_On != false){
-      var save = confirm("Вы - администратор?");
-      if(save){
-        for (var i=0;i<menu.length; i++) {
-          if (menu[i].checked) {
-             Request(menu[i].id, Mycallback);
-          }
-        }
-         but_On = true;
-      }
-    } else{
-      for (var i=0;i<menu.length; i++) {
-        if (menu[i].checked) {
-           Request(menu[i].id, Mycallback);
-        }
-      }
-       but_On = true;
-    }
     
+    if(but_On != false){
+      var save = confirm("Ви впевнені що хочете змінити тест, всі відповіді не збережуться");
+      if(save){
+          clear(conteiner,form);
+          Request(checked(menu), Mycallback);
+      } 
+    } else{
+        Request(checked(menu), Mycallback);
+        but_On = true;
+    } 
+}
+
+
+ver_but.onclick = function(){
+    var answer = document.getElementsByName('answer');
+    var length = answer.length;
+    var answers = checked(answer);
+    console.log(finalArr);
+    if(answers.length < finalArr.length){
+        var save = confirm(`ви відповіли на ${answers.length} питань з ${finalArr.length}. Ви впевнені що хочете перевірити свої знання?`);
+        if(save){
+            for(var i = 0; i < answers.length; i++){
+                var rightId = GetObjectByID(answers[i]).right; 
+                
+                var rightElem = document.getElementById(rightId).parentElement;
+                var thisElem = document.getElementById(answers[i]).parentElement;
+                
+                if(rightId == answers[i]){
+                    thisElem.style.backgroundColor = 'green';
+                } else {
+                    console.log(rightElem);
+                    console.log(thisElem);
+                    rightElem.style.backgroundColor = 'green';
+                    thisElem.style.backgroundColor = 'red';
+                }
+            }
+        }
+    } else if(answers.length == answer.length){
+        
+    }
+}
+function GetObjectByID(answerId){
+    for(var j = 0; j < finalArr.length; j++){
+        for(var k = 0; k < finalArr[j].answer.length; k++){
+            if (finalArr[j].answer[k].id == answerId) return finalArr[j];
+        }
+    }
 }
 
 function Mycallback(param){
     var Array = getArray(param);
-    //console.log(Array);
+    finalArr = Array;
     DOM_Add_html(Array);
-    
+}
+
+function checked(name){
+    var arr = [];
+    for (var i=0;i<name.length; i++) {
+        if (name[i].checked) arr.push(name[i].id);
+    } console.log(arr);
+    if(name.length == 1){
+        return arr[0];
+    } else {
+        return arr;
+    }
 }
 
 function DOM_Add_html(arr){ 
@@ -45,7 +85,7 @@ function DOM_Add_html(arr){
         for(var j = 0; j < arr[i].answer.length; j++){
             radio = radio + `
         <label class="container"> ${arr[i].answer[j].answe}
-        <input type="radio"  name="radio">
+        <input type="radio"  name="answer" id = ${arr[i].answer[j].id}>
         <span class="checkmark"></span>
         </label>
         `;
@@ -73,7 +113,7 @@ function getArray(param){
       pos = qPosition(questions[i], '-v-', -1);
       var t = qPosition(questions[i], '-t-', pos);
 
-      answ[i] = { questions : '',answer : [], right : -1, id : i};
+      answ[i] = { questions : '',answer : [], right : -1, id : i + 100};
 
       answ[i].questions = questions[i].slice(0 + 3, qPosition(questions[i], '-v-', pos - 1));
     
@@ -111,8 +151,11 @@ function Request(test, callback){
     
 }
 
-function clear(Parent_elem,elem){
-    for(var i = 0; i < elem.length; i++){
+function clear(Parent_elem,elem){   
+    for(var i = elem.length-1; i >= 0; i--){
       Parent_elem.removeChild(elem[i]);
     }
 }
+
+
+
