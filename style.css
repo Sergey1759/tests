@@ -1,70 +1,84 @@
+body{
+    background-color: #D8F072 !important;
+    margin: 0px;
+    margin-top: 20px;
+    padding: 0px;
+    z-index: 100;
+    font-weight: bold;
+}
+.custom-control-label{
+    color: #4D2E38;
+}
+#group{
+    z-index: 1001;
+    overflow: hidden;
+    background-color: #D8F072;
+    position: fixed; 
+    top: 0; 
+    left: -320px;
+    width: 430px;
+    padding: 10px;
+    border: 1px solid #56494E;
+    border-radius: 0 0 50px 0;
+    box-sizing: border-box;
+}
+#left_group{
+    display: block;
+    width: 300px;
+    float: left;
+    height: 100%;
+    box-sizing: border-box;
+}
+#right_group{
+    box-sizing: border-box;
+    display: block;
+    width: 100px;
+    height: 200px ;
+    background-image: url(arrow-right.png);
+    background-position: center right;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    float: right;
+}
+#bottom_group{
+    clear: both;
+}
+.custom-control{
+    border-radius: 20px;
+}
+
 .myForm {
     padding: 40px;
     margin: 20px;
-    border: 3px solid red;
+    margin-left: 130px;
+    margin-right: 130px;
+    border: 2px solid #04801c;
+    background-color:  #dcf8c3;
+    border-radius: 20px;
 }
-.container {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 22px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+.goRight{
+    animation-direction: normal;
+    animation-duration: 1s;
+    animation-name: right;
 }
-
-/* Hide the browser's default radio button */
-.container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
+.goLeft{
+    animation-direction: normal;
+    animation-duration: 1s;
+    animation-name: left;
 }
-
-/* Create a custom radio button */
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 25px;
-  width: 25px;
-  background-color: #eee;
-  border-radius: 50%;
+@keyframes right {
+    0%{
+        left: -320px;
+    }
+    100%{
+        left: 0;
+    }
 }
-
-/* On mouse-over, add a grey background color */
-.container:hover input ~ .checkmark {
-  background-color: #ccc;
+@keyframes left {
+    0%{
+        left: 0;
+    }
+    100%{
+        left: -320px;
+    }
 }
-
-/* When the radio button is checked, add a blue background */
-.container input:checked ~ .checkmark {
-  background-color: #2196F3;
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container .checkmark:after {
-  top: 9px;
-  left: 9px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: white;
-}
-

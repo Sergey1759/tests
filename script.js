@@ -1,12 +1,35 @@
+//^\d{1,2}|100$ 
+//При вимірах продуктивності необхідно враховувати такі моменти:
 var sel_but = document.getElementById('sel_but');
 var ver_but = document.getElementById('verify');
-var conteiner = document.getElementById('conteiner');
+var chaked_all = document.getElementById('chaked_all');
+var right_group = document.getElementById('right_group');
+var group = document.getElementById('group');
+var conteiner = document.getElementById('conteiner_form');
 var but_On = false;
 var finalArr;
+var left = true;
+
+
+chaked_all.onclick = function(){
+    console.log(1);
+    for (var i=0;i<document.getElementsByName('answer').length; i++) {
+       document.getElementsByName('answer')[i].checked = true;
+    }
+}
+
+
+//window.onscroll = function() {
+//    if(left){
+//        setTimeout(left_right_group(),100);
+//    }
+//}
 
 sel_but.onclick = function(){
     var form = document.getElementsByClassName('myForm');
     var menu = document.getElementsByName('menu');
+    
+    left_right_group();
     
     if(but_On != false){
       var save = confirm("Ви впевнені що хочете змінити тест, всі відповіді не збережуться");
@@ -20,35 +43,52 @@ sel_but.onclick = function(){
     } 
 }
 
+right_group.onclick = function(){
+   left_right_group();
+}
+
+function left_right_group(){
+    if(group.className == ""){
+        group.classList.add('goRight');
+            setTimeout(function(){
+                group.style.left = 0;
+                left = true;
+                right_group.style.backgroundImage = 'url(arrow-left.png)';
+            },1000);
+    }else if(group.className == "goLeft"){
+        group.classList.remove("goLeft");
+        group.classList.add("goRight");
+            setTimeout(function(){
+                group.style.left = 0;
+                left = true;
+                right_group.style.backgroundImage = 'url(arrow-left.png)';
+            },1000); 
+    } else if(group.className == "goRight"){
+        group.classList.remove("goRight");
+        group.classList.add("goLeft");
+            setTimeout(function(){
+                group.style.left = '-320px';
+                left = false;
+                right_group.style.backgroundImage = 'url(arrow-right.png)';
+            },1000);
+    }
+}
 
 ver_but.onclick = function(){
     var answer = document.getElementsByName('answer');
     var length = answer.length;
     var answers = checked(answer);
+    var count_right_answer = 0;
     console.log(finalArr);
     if(answers.length < finalArr.length){
         var save = confirm(`ви відповіли на ${answers.length} питань з ${finalArr.length}. Ви впевнені що хочете перевірити свої знання?`);
-        if(save){
-            for(var i = 0; i < answers.length; i++){
-                var rightId = GetObjectByID(answers[i]).right; 
-                
-                var rightElem = document.getElementById(rightId).parentElement;
-                var thisElem = document.getElementById(answers[i]).parentElement;
-                
-                if(rightId == answers[i]){
-                    thisElem.style.backgroundColor = 'green';
-                } else {
-                    console.log(rightElem);
-                    console.log(thisElem);
-                    rightElem.style.backgroundColor = 'green';
-                    thisElem.style.backgroundColor = 'red';
-                }
-            }
-        }
-    } else if(answers.length == answer.length){
-        
+        if(save) { count_right_answer = verifyDOM(answers)}; 
+    } else if(answers.length == finalArr.length){
+             count_right_answer = verifyDOM(answers);
     }
+    alert(`ви відповіли правильно на ${count_right_answer} питань з ${answers.length}`)
 }
+
 function GetObjectByID(answerId){
     for(var j = 0; j < finalArr.length; j++){
         for(var k = 0; k < finalArr[j].answer.length; k++){
@@ -57,10 +97,31 @@ function GetObjectByID(answerId){
     }
 }
 
+ function verifyDOM(answers){
+     var count_right_answer = 0;
+    for(var i = 0; i < answers.length; i++){
+        var rightId = GetObjectByID(answers[i]).right; 
+        console.log( GetObjectByID(answers[i]).right);
+        var rightElem = document.getElementById(rightId).parentElement;
+        var thisElem = document.getElementById(answers[i]).parentElement;
+        if(rightId == answers[i]){
+            count_right_answer++;
+            if(thisElem.id != 'conteiner_form') thisElem.style.backgroundColor = '#6af885';
+        } else {
+            //console.log(rightElem);
+            //console.log(thisElem);
+            if(rightElem.id != 'conteiner_form') rightElem.style.backgroundColor = '#6af885';
+            if(thisElem.id != 'conteiner_form') thisElem.style.backgroundColor = '#ffaaaa'; 
+        }
+    }
+     return count_right_answer;
+}
+
 function Mycallback(param){
     var Array = getArray(param);
     finalArr = Array;
     DOM_Add_html(Array);
+   
 }
 
 function checked(name){
@@ -84,12 +145,12 @@ function DOM_Add_html(arr){
         var radio = "";
         for(var j = 0; j < arr[i].answer.length; j++){
             radio = radio + `
-        <label class="container"> ${arr[i].answer[j].answe}
-        <input type="radio"  name="answer" id = ${arr[i].answer[j].id}>
-        <span class="checkmark"></span>
-        </label>
+<div class="custom-control custom-radio custom-control">
+  <input type="radio" id=${arr[i].answer[j].id} name="answer" class="custom-control-input">
+  <label class="custom-control-label" for=${arr[i].answer[j].id}>${arr[i].answer[j].answe}</label>
+</div>
         `;
-            console.log(arr[i].answer[j].answe);
+           // console.log(arr[i].answer[j].answe);
         }
         form.innerHTML = h3 + radio;
         conteiner.appendChild(form);
@@ -113,7 +174,7 @@ function getArray(param){
       pos = qPosition(questions[i], '-v-', -1);
       var t = qPosition(questions[i], '-t-', pos);
 
-      answ[i] = { questions : '',answer : [], right : -1, id : i + 100};
+      answ[i] = { questions : '',answer : [], right : -1, id : i + 1000};
 
       answ[i].questions = questions[i].slice(0 + 3, qPosition(questions[i], '-v-', pos - 1));
     
