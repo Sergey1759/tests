@@ -6,9 +6,19 @@ var chaked_all = document.getElementById('chaked_all');
 var right_group = document.getElementById('right_group');
 var group = document.getElementById('group');
 var conteiner = document.getElementById('conteiner_form');
+
+
+var test_q1;
 var but_On = false;
 var finalArr;
+var rand_final;
 var left = true;
+
+
+
+    
+
+
 
 
 chaked_all.onclick = function(){
@@ -17,13 +27,6 @@ chaked_all.onclick = function(){
        document.getElementsByName('answer')[i].checked = true;
     }
 }
-
-
-//window.onscroll = function() {
-//    if(left){
-//        setTimeout(left_right_group(),100);
-//    }
-//}
 
 sel_but.onclick = function(){
     var form = document.getElementsByClassName('myForm');
@@ -35,10 +38,12 @@ sel_but.onclick = function(){
       var save = confirm("Ви впевнені що хочете змінити тест, всі відповіді не збережуться");
       if(save){
           clear(conteiner,form);
-          Request(checked(menu), Mycallback);
+          test_q1 = checked(menu);
+          Request(test_q1, Mycallback);
       } 
     } else{
-        Request(checked(menu), Mycallback);
+        test_q1 = checked(menu);
+        Request(test_q1, Mycallback);
         but_On = true;
     } 
 }
@@ -79,17 +84,17 @@ ver_but.onclick = function(){
     var length = answer.length;
     var answers = checked(answer);
     var count_right_answer = 0;
-    console.log(finalArr);
-    if(answers.length < finalArr.length){
-        var save = confirm(`ви відповіли на ${answers.length} питань з ${finalArr.length}. Ви впевнені що хочете перевірити свої знання?`);
+    console.log(rand_final);
+    if(answers.length < rand_final.length){
+        var save = confirm(`ви відповіли на ${answers.length} питань з ${rand_final.length}. Ви впевнені що хочете перевірити свої знання?`);
         if(save) { count_right_answer = verifyDOM(answers)}; 
-    } else if(answers.length == finalArr.length){
+    } else if(answers.length == rand_final.length){
              count_right_answer = verifyDOM(answers);
     }
-    alert(`ви відповіли правильно на ${count_right_answer} питань з ${answers.length}`)
+    alert(`ви відповіли правильно на ${count_right_answer} питань з ${rand_final.length}`)
 }
 
-function GetObjectByID(answerId){
+function GetObjectByID(answerId,finalArr){
     for(var j = 0; j < finalArr.length; j++){
         for(var k = 0; k < finalArr[j].answer.length; k++){
             if (finalArr[j].answer[k].id == answerId) return finalArr[j];
@@ -100,8 +105,8 @@ function GetObjectByID(answerId){
  function verifyDOM(answers){
      var count_right_answer = 0;
     for(var i = 0; i < answers.length; i++){
-        var rightId = GetObjectByID(answers[i]).right; 
-        console.log( GetObjectByID(answers[i]).right);
+        var rightId = GetObjectByID(answers[i],rand_final).right; 
+      //  console.log( GetObjectByID(answers[i],rand_final).right);
         var rightElem = document.getElementById(rightId).parentElement;
         var thisElem = document.getElementById(answers[i]).parentElement;
         if(rightId == answers[i]){
@@ -120,7 +125,8 @@ function GetObjectByID(answerId){
 function Mycallback(param){
     var Array = getArray(param);
     finalArr = Array;
-    DOM_Add_html(Array);
+    choose_mode(Array);
+   // DOM_Add_html(rand_final);
    
 }
 
@@ -128,7 +134,7 @@ function checked(name){
     var arr = [];
     for (var i=0;i<name.length; i++) {
         if (name[i].checked) arr.push(name[i].id);
-    } console.log(arr);
+    } 
     if(name.length == 1){
         return arr[0];
     } else {
@@ -136,7 +142,7 @@ function checked(name){
     }
 }
 
-function DOM_Add_html(arr){ 
+function DOM_Add_html(arr,button){ 
     for(var i = 0; i < arr.length; i++){
         var form = document.createElement('form');
         form.id = arr[i].id;
@@ -152,9 +158,13 @@ function DOM_Add_html(arr){
         `;
            // console.log(arr[i].answer[j].answe);
         }
-        form.innerHTML = h3 + radio;
+        form.innerHTML = h3 + radio + button;
         conteiner.appendChild(form);
     }
+    var verify_q1 = document.getElementById('verify_q1');
+    verify_q1.addEventListener("click", q1_verify_listner, false);
+    var next_q1 = document.getElementById('next_q1');
+    next_q1.addEventListener("click", q1_next_listner, false);
 }
 
 function getArray(param){
@@ -218,5 +228,56 @@ function clear(Parent_elem,elem){
     }
 }
 
+function _randomArray(count,max,arr){
+//var mas = [];
+var mas1 = [];
+//for(var i = 0; i < max; i++){
+//  mas[i] = i;
+//}
+var i = 0;
+while( i < count){
+  var num = Math.floor(Math.random() * (max - 1 + 1));
+  if(arr[num] != -1){
+    mas1[i] = arr[num];
+    arr[num] = -1;
+    i++; 
+  }
+}
+return mas1;
+}
 
+function choose_mode(array){
+    var mode = document.getElementsByName('choose_mode');
+    var chacked_mode = checked(mode);
+    if(chacked_mode == 'all_q') {
+        rand_final = _randomArray(finalArr.length,finalArr.length,finalArr);
+        DOM_Add_html(rand_final,'');
+    } else if(chacked_mode == '30q'){
+        rand_final = _randomArray(30,finalArr.length,finalArr);
+        DOM_Add_html(rand_final,'');
+    } else if(chacked_mode == '1q'){
+        rand_final = _randomArray(1,finalArr.length,finalArr);
+        var button = `
+        <button type="button" class="btn btn-success" id ="verify_q1">перевірити</button>
+        <button type="button" class="btn btn-success" id ="next_q1">наступне питання</button>
+        `;
+        DOM_Add_html(rand_final,button);
+    }
+}
 
+function q1_verify_listner(){
+    var answer = document.getElementsByName('answer');
+    var answers = checked(answer);
+    if(answers.length < rand_final.length){
+        alert(`ви відповіли не відповіли`);
+    } else if(answers.length == rand_final.length){
+             count_right_answer = verifyDOM(answers);
+    }
+}
+
+function q1_next_listner(){
+    var form = document.getElementsByClassName('myForm');
+    clear(conteiner,form);
+    console.log(test_q1);
+    Request(test_q1, Mycallback);
+}
